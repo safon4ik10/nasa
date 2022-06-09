@@ -60,4 +60,18 @@ public class Nasa {
     public String getUrl() {
         return url;
     }
+
+    @Override
+    public String toString() {
+        return "Nasa{" +
+                "copyright='" + copyright + '\'' +
+                ", date=" + date +
+                ", explanation='" + explanation + '\'' +
+                ", hdurl='" + hdurl + '\'' +
+                ", mediaType='" + mediaType + '\'' +
+                ", serviceVersion='" + serviceVersion + '\'' +
+                ", title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }
