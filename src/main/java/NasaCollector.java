@@ -11,18 +11,23 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NasaCollector {
 
     private String token;
     private static final String NASA_URL = "https://api.nasa.gov/planetary/apod?api_key=";
+    private static final Pattern pattern = Pattern.compile("\\w+.jpg");
 
     public NasaCollector(String token) {
         this.token = token;
@@ -60,7 +65,7 @@ public class NasaCollector {
         return null;
     }
 
-    public Nasa getNasaObject(){
+    public Nasa getNasaObject() {
         String body = getBody(getClient());
         if (body != null) {
             try {
@@ -72,28 +77,23 @@ public class NasaCollector {
         return null;
     }
 
-    public String getHDUrl(Nasa nasa) {
+    public void saveImg(Nasa nasa, boolean isHDFile) {
         CloseableHttpClient httpClient = getClient();
-        String hdUrl = nasa.getHdurl();
-        String fileName = hdUrl.toString().
+        URL imgUrl = isHDFile ? nasa.getHdurl() : nasa.getUrl();
 
-        HttpGet request = new HttpGet(hdUrl);
-        request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-        try {
-            CloseableHttpResponse response = httpClient.execute(request);
-
-            BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent());
-            String filePath = "sample.txt";
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(filePath)));
-            int inByte;
-            while((inByte = bis.read()) != -1) bos.write(inByte);
-            bis.close();
-            bos.close();
-            //return new String(response.getEntity().getContent(), StandardCharsets.UTF_8);
+        try (InputStream in = imgUrl.openStream()) {
+            String fileName = imgUrl.getFile();
+            Matcher matcher = pattern.matcher(fileName);
+            if (matcher.find()) {
+                String urlFilename = matcher.group();
+                try {
+                    Files.copy(in, Paths.get(urlFilename));
+                } catch (FileAlreadyExistsException e){
+                    System.out.println("Изображение: " + e.getMessage() + " уже существует");
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 }

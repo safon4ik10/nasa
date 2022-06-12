@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.net.URL;
 import java.util.Date;
 
 public class Nasa {
@@ -7,21 +8,21 @@ public class Nasa {
     private final String copyright;
     private final Date date;
     private final String explanation;
-    private final String hdurl;
+    private final URL hdurl;
     private final String mediaType;
     private final String serviceVersion;
     private final String title;
-    private final String url;
+    private final URL url;
 
     public Nasa(
             @JsonProperty("copyright") String copyright,
             @JsonProperty("date") Date date,
             @JsonProperty("explanation") String explanation,
-            @JsonProperty("hdurl") String hdurl,
+            @JsonProperty("hdurl") URL hdurl,
             @JsonProperty("media_type") String mediaType,
             @JsonProperty("service_version") String serviceVersion,
             @JsonProperty("title") String title,
-            @JsonProperty("url") String url
+            @JsonProperty("url") URL url
     ) {
         this.copyright = copyright;
         this.date = date;
@@ -45,7 +46,7 @@ public class Nasa {
         return explanation;
     }
 
-    public String getHdurl() {
+    public URL getHdurl() {
         return hdurl;
     }
 
@@ -57,7 +58,7 @@ public class Nasa {
         return title;
     }
 
-    public String getUrl() {
+    public URL getUrl() {
         return url;
     }
 

@@ -5,6 +5,8 @@ public class Main {
         NasaCollector nasaCollector = new NasaCollector(token);
 
         Nasa nasa = nasaCollector.getNasaObject();
+        nasaCollector.saveImg(nasa, true);
+
         System.out.println(nasa.toString());
     }
 }
